@@ -33,8 +33,11 @@ class RxSwiftViewController: UIViewController {
 
     @IBAction func onLoadImage(_ sender: Any) {
         imageView.image = nil
+        
+        // Thread > Operation > GCD > Scheduler
 
          rxswiftLoadImage(from: LARGER_IMAGE_URL)
+            // obsereOn 은 사용한 직후 다음줄로부터, subscribOn 은 시작을 해당 스케쥴러 부터
             .observeOn(MainScheduler.instance)
             // subscribe : 나중에_오면
             .subscribe({ result in

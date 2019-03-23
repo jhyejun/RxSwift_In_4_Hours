@@ -1,0 +1,20 @@
+pthread : POSIX C API
+Thread : Obj-c, Swift
+Operation : Obj-c, Swift
+OperationQueue
+
+GCD
+
+Concurrency Programming
+Parallel Programming
+
+
+DispatchQueue
+
+serial : main (UI를 건드릴 수 있음)
+    sync
+    asnyc
+
+concurrency : global
+    sync
+    asnyc
