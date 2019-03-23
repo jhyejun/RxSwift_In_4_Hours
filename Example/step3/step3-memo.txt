@@ -1,0 +1,6 @@
+UI 는 스트림이 끊어지면 안되기 때문에 (error, complete 로 인해서 끊어지면 UI 가 멈춰서 반응이 안됨)
+
+또한 메인스레드에서만 처리해야하기 때문에 sugar API 를 사용해야함
+
+UI 용으로 사용해야할 것 Relay (Subject 대신에)
+asDriver, drive (subscribe 대신에)

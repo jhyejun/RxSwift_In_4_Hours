@@ -12,10 +12,14 @@ import UIKit
 
 class ViewController: UIViewController {
     var disposeBag = DisposeBag()
+    
+    let relay = PublishRelay<String>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         bindUI()
+        
+        relay.accept("TEST")
     }
 
     // MARK: - IBOutler
@@ -34,6 +38,24 @@ class ViewController: UIViewController {
         //          +--> button enable
         //          |
         // pw input +--> check valid --> bullet
+        
+        let isValidEmail = idField.rx.text.orEmpty.map(checkEmailValid)
+        let isValidPw = pwField.rx.text.orEmpty.map(checkPasswordValid)
+        
+        isValidEmail
+            .bind(to: idValidView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        isValidPw
+            .bind(to: pwValidView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(isValidEmail, isValidPw) { $0 && $1 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { (result) in
+                self.loginButton.rx.isEnabled
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Logic
