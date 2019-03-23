@@ -20,7 +20,7 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exJust1() {
-        Observable.just("Hello World")
+        Observable.just("Hello World")                              // Observable<String>
             .subscribe(onNext: { str in
                 print(str)
             })
@@ -28,7 +28,7 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exJust2() {
-        Observable.just(["Hello", "World"])
+        Observable.just(["Hello", "World"])                         // Observable<String>
             .subscribe(onNext: { arr in
                 print(arr)
             })
@@ -36,7 +36,7 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exFrom1() {
-        Observable.from(["RxSwift", "In", "4", "Hours"])
+        Observable.from(["RxSwift", "In", "4", "Hours"])            // Observable<String>
             .subscribe(onNext: { str in
                 print(str)
             })
@@ -44,8 +44,8 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exMap1() {
-        Observable.just("Hello")
-            .map { str in "\(str) RxSwift" }
+        Observable.just("Hello")                                    // Observable<String>
+            .map { str in "\(str) RxSwift" }                        // Observable<String>
             .subscribe(onNext: { str in
                 print(str)
             })
@@ -53,8 +53,8 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exMap2() {
-        Observable.from(["with", "곰튀김"])
-            .map { $0.count }
+        Observable.from(["with", "곰튀김"])                           // Observable<String>
+            .map { $0.count }                                       // Observable<Int>
             .subscribe(onNext: { str in
                 print(str)
             })
@@ -62,8 +62,8 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exFilter() {
-        Observable.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-            .filter { $0 % 2 == 0 }
+        Observable.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])            // Observable<Int>
+            .filter { $0 % 2 == 0 }                                 // Observable<Int>
             .subscribe(onNext: { n in
                 print(n)
             })
@@ -71,14 +71,18 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func exMap3() {
-        Observable.just("800x600")
-            .map { $0.replacingOccurrences(of: "x", with: "/") }
-            .map { "https://picsum.photos/\($0)/?random" }
-            .map { URL(string: $0) }
-            .filter { $0 != nil }
-            .map { $0! }
-            .map { try Data(contentsOf: $0) }
-            .map { UIImage(data: $0) }
+        Observable.just("800x600")                                  // Observable<String>
+            .map { $0.replacingOccurrences(of: "x", with: "/") }    // Observable<String>
+            .map { "https://picsum.photos/\($0)/?random" }          // Observable<String>
+            .map { URL(string: $0) }                                // Observable<URL?>
+            .filter { $0 != nil }                                   // Observable<URL?>
+            .map { $0! }                                            // Observable<URL>
+            .observeOn(ConcurrentDispatchQueueScheduler(qos: .utility))
+            .map { try Data(contentsOf: $0) }                       // Observable<Data>
+            .observeOn(ConcurrentDispatchQueueScheduler(qos: .default))
+            .map { UIImage(data: $0) }                              // Observable<UIImage?>
+            .observeOn(ConcurrentDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { image in
                 self.imageView.image = image
             })
