@@ -33,6 +33,7 @@ class PromiseViewController: UIViewController {
         imageView.image = nil
 
         promiseLoadImage(from: LARGER_IMAGE_URL)
+            // done : 나중에_오면
             .done { image in
                 self.imageView.image = image
             }.catch { error in
@@ -43,6 +44,7 @@ class PromiseViewController: UIViewController {
     // MARK: - PromiseKit
 
     func promiseLoadImage(from imageUrl: String) -> Promise<UIImage?> {
+        // Prmoise : 나중에_줄게
         return Promise<UIImage?>() { seal in
             asyncLoadImage(from: imageUrl) { image in
                 seal.fulfill(image)

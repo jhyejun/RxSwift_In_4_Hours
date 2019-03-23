@@ -22,6 +22,8 @@ class RxSwiftViewController: UIViewController {
         }
     }
 
+    var disposeBag: DisposeBag = DisposeBag()
+
     // MARK: - IBOutlet
 
     @IBOutlet var imageView: UIImageView!
@@ -32,8 +34,9 @@ class RxSwiftViewController: UIViewController {
     @IBAction func onLoadImage(_ sender: Any) {
         imageView.image = nil
 
-        _ = rxswiftLoadImage(from: LARGER_IMAGE_URL)
+         rxswiftLoadImage(from: LARGER_IMAGE_URL)
             .observeOn(MainScheduler.instance)
+            // subscribe : 나중에_오면
             .subscribe({ result in
                 switch result {
                 case let .next(image):
@@ -45,22 +48,60 @@ class RxSwiftViewController: UIViewController {
                 case .completed:
                     break
                 }
-            })
+            }).disposed(by: disposeBag)
     }
 
     @IBAction func onCancel(_ sender: Any) {
-        // TODO: cancel image loading
+        // 일부러 disposeBag 에 있는 것들을 dispose 할 때는 재생성
+        disposeBag = DisposeBag()
     }
 
     // MARK: - RxSwift
 
     func rxswiftLoadImage(from imageUrl: String) -> Observable<UIImage?> {
-        return Observable.create { seal in
-            asyncLoadImage(from: imageUrl) { image in
-                seal.onNext(image)
-                seal.onCompleted()
+        // Observable : 나중에_줄게
+//        Observable<String>.create { (observer) -> Disposable in
+//            // observable 에 제공해줄 수 있는 데이터는 3가지
+//            // Next
+//            observer.onNext("A")
+//            observer.onNext("B")
+//            observer.onNext("C")
+//            observer.onNext("D")
+//
+//            // Completed
+//            observer.onCompleted()
+//
+//            // Error
+//            observer.onError(NSError())
+//
+//            return Disposables.create()
+//        }
+        
+        return Observable.create { observer in
+            guard let url = URL(string: imageUrl) else {
+                observer.onCompleted()
+                return Disposables.create()
             }
-            return Disposables.create()
+            
+            let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                if let error = error {
+                    observer.onError(error)
+                }
+                
+                if let data = data {
+                    let image = UIImage(data: data)
+                    observer.onNext(image)
+                }
+                
+                observer.onCompleted()
+            })
+            
+            task.resume()
+            
+            return Disposables.create {
+                // 새로 생성 된 disposable 이 dispose 될 때 실행할 클로져
+                task.cancel()
+            }
         }
     }
 }

@@ -35,7 +35,11 @@ class AsyncViewController: UIViewController {
     }
 
     @IBAction func onLoadAsync(_ sender: Any) {
-        // TODO: async
+        loadImageAsync1(from: IMAGE_URL) {
+            self.imageView.image = $0
+        }
+        
+        // loadImageAsync3(from: IMAGE_URL) { (나중에_오면<UIImage>) }
     }
 
     private func loadImage(from imageUrl: String) -> UIImage? {
@@ -45,4 +49,26 @@ class AsyncViewController: UIViewController {
         let image = UIImage(data: data)
         return image
     }
+    
+    // 리턴하는 방법 1 (callBack 함수)
+    private func loadImageAsync1(from imageUrl: String, callBack: @escaping (UIImage?) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            let image = self.loadImage(from: self.IMAGE_URL)
+            DispatchQueue.main.async {
+                callBack(image)
+            }
+        }
+    }
+    
+    // 리턴하는 방법 2 (delegate 사용)
+    private func loadImageAsync2(from imageUrl: String) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            let image = self.loadImage(from: self.IMAGE_URL)
+            // delegate.setImage
+        }
+    }
+    
+    // 리턴하는 방법 3
+    // Reactive Programming (나중에 생기는 애를 나중에 줄게)
+    // private func loadImageAsync3(from imageUrl: String) -> 나중에_줄게<UIImage> { }
 }

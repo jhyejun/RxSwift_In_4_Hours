@@ -33,6 +33,7 @@ class BoltsViewController: UIViewController {
         imageView.image = nil
 
         boltsLoadImage(from: LARGER_IMAGE_URL)
+            // continueWith : 나중에_오면
             .continueWith(continuation: { task in
                 DispatchQueue.main.async {
                     let image = task.result
@@ -44,6 +45,7 @@ class BoltsViewController: UIViewController {
     // MARK: - Bolts
 
     func boltsLoadImage(from imageUrl: String) -> Task<UIImage> {
+        // Task : 나중에_줄게
         let taskCompletionSource = TaskCompletionSource<UIImage>()
         asyncLoadImage(from: imageUrl, completed: { image in
             guard let image = image else {
