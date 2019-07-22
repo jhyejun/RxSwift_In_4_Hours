@@ -107,9 +107,12 @@ RxSwift의 근본적인 학습 자체보다는, 빠르게 사용법을 익혀 �
 ## References
 
 - [Official] [ReactiveX](http://reactivex.io/)
-- [Video] [RxSwift 4시간에 끝내기](https://www.youtube.com/watch?v=2uumx7Vzidc&list=PL03rJBlpwTaAh5zfc8KWALc3ADgugJwjq)
+- [Video] [RxSwift 4시간에 끝내기](https://www.youtube.com/watch?v=w5Qmie-GbiA&index=1&list=PL03rJBlpwTaAh5zfc8KWALc3ADgugJwjq)<br/>
+  ![]()
+  [![오프라인 모임 종햡편](https://img.youtube.com/vi/w5Qmie-GbiA/0.jpg)](https://www.youtube.com/watch?v=w5Qmie-GbiA&index=1&list=PL03rJBlpwTaAh5zfc8KWALc3ADgugJwjq)
 - Unfinished Observable / Memory Leak
 	- (참조) [클로져와 메모리 해제 실험](https://iamchiwon.github.io/2018/08/13/closure-mem/)
+- [카카오톡 RxSwift 오픈 채팅방](https://open.kakao.com/o/gl2YZjq)
 
 <br/>
 
