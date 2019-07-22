@@ -8,11 +8,17 @@
 
 import UIKit
 
+protocol LoadImageDelegate: AnyObject {
+    func successLoadImage(_ image: UIImage)
+}
+
 class AsyncViewController: UIViewController {
     // MARK: - Field
 
     var counter: Int = 0
     let IMAGE_URL = "https://picsum.photos/1280/720/?random"
+    
+    weak var delegate: LoadImageDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +26,8 @@ class AsyncViewController: UIViewController {
             self.counter += 1
             self.countLabel.text = "\(self.counter)"
         }
+        
+        delegate = self
     }
 
     // MARK: - IBOutlet
@@ -35,11 +43,15 @@ class AsyncViewController: UIViewController {
     }
 
     @IBAction func onLoadAsync(_ sender: Any) {
-        loadImageAsync1(from: IMAGE_URL) {
-            self.imageView.image = $0
-        }
+//        // 리턴하는 방법 1 (callBack 함수)
+//        loadImageAsync1(from: IMAGE_URL) {
+//            self.imageView.image = $0
+//        }
         
-        // loadImageAsync3(from: IMAGE_URL) { (나중에_오면<UIImage>) }
+//        // 리턴하는 방법 2 (delegate 사용)
+//        loadImageAsync2(from: IMAGE_URL)
+        
+//        loadImageAsync3(from: IMAGE_URL) { (나중에_오면<UIImage>) }
     }
 
     private func loadImage(from imageUrl: String) -> UIImage? {
@@ -49,6 +61,8 @@ class AsyncViewController: UIViewController {
         let image = UIImage(data: data)
         return image
     }
+
+    // MARK: - Image Return Method
     
     // 리턴하는 방법 1 (callBack 함수)
     private func loadImageAsync1(from imageUrl: String, callBack: @escaping (UIImage?) -> Void) {
@@ -62,13 +76,23 @@ class AsyncViewController: UIViewController {
     
     // 리턴하는 방법 2 (delegate 사용)
     private func loadImageAsync2(from imageUrl: String) {
-        DispatchQueue.global(qos: .userInteractive).async {
-            let image = self.loadImage(from: self.IMAGE_URL)
-            // delegate.setImage
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else { return }
+            if let image = self.loadImage(from: self.IMAGE_URL) {
+                self.delegate?.successLoadImage(image)
+            }
         }
     }
     
     // 리턴하는 방법 3
     // Reactive Programming (나중에 생기는 애를 나중에 줄게)
     // private func loadImageAsync3(from imageUrl: String) -> 나중에_줄게<UIImage> { }
+}
+
+extension AsyncViewController: LoadImageDelegate {
+    func successLoadImage(_ image: UIImage) {
+        DispatchQueue.main.async {
+            self.imageView.image = image
+        }
+    }
 }
