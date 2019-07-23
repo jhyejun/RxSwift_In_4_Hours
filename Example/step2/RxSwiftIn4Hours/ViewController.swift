@@ -45,7 +45,7 @@ class ViewController: UITableViewController {
 
     @IBAction func exMap1() {
         Observable.just("Hello")                                    // Observable<String>
-            .map { str in "\(str) RxSwift" }                        // Observable<String>
+            .map { "\($0) RxSwift" }                                // Observable<String>
             .subscribe(onNext: { str in
                 print(str)
             })
@@ -64,17 +64,24 @@ class ViewController: UITableViewController {
     @IBAction func exFilter() {
         Observable.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])            // Observable<Int>
             .filter { $0 % 2 == 0 }                                 // Observable<Int>
+            .single()                                               // single 은 스트림이 한번만 발생해야하나 여러번 발생해서 에러가 발생
             .subscribe(onNext: { n in
-                print(n)
+                print("success: \(n)")
+            }, onError: { (error) in
+                print("error: \(error.localizedDescription)")
+            }, onCompleted: {
+                print("completed")
+            }, onDisposed: {
+                print("disposed")
             })
             .disposed(by: disposeBag)
     }
 
     @IBAction func exMap3() {
-        Observable.just("800x600")                                  // Observable<String>
-            .map { $0.replacingOccurrences(of: "x", with: "/") }    // Observable<String>
-            .map { "https://picsum.photos/\($0)/?random" }          // Observable<String>
-            .map { URL(string: $0) }                                // Observable<URL?>
+        Observable.just("800x600")                                  // Observable<String> -> "800x600"
+            .map { $0.replacingOccurrences(of: "x", with: "/") }    // Observable<String> -> "800/600"
+            .map { "https://picsum.photos/\($0)/?random" }          // Observable<String> -> "https://picsum.photos/800/600/?random"
+            .map { URL(string: $0) }                                // Observable<URL?> -> URL(https://picsum.photos/800/600/?random)
             .filter { $0 != nil }                                   // Observable<URL?>
             .map { $0! }                                            // Observable<URL>
             .observeOn(ConcurrentDispatchQueueScheduler(qos: .utility))
