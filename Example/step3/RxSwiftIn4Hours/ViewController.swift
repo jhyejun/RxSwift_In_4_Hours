@@ -53,7 +53,7 @@ class ViewController: UIViewController {
         Observable.combineLatest(isValidEmail, isValidPw) { $0 && $1 }
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { (result) in
-                self.loginButton.rx.isEnabled
+                self.loginButton.isEnabled = result
             })
             .disposed(by: disposeBag)
     }
